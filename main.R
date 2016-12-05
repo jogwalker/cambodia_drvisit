@@ -8,7 +8,7 @@ library(tidyr)
 library(dplyr)
 
 startdate <- as.Date("2016-12-01")
-runtime <- 2 # years
+runtime <- 3 # years
 elisaperday <- 30
 elisayield <- 0.6
 elisawait <- 7 # days
@@ -51,7 +51,12 @@ dat$drvisit <- rowSums(cbind(dat[,5:16]))
 dat$baselinevisit <- rowSums(cbind(dat[,5:6]))
 dat$treatmentvisit <- rowSums(cbind(dat[,7:14]))
 dat$followupvisit <- rowSums(cbind(dat[,15:16]))
-dat[dat==0] <- NA
+# how many patients are on treatment at once?
+dat$starttreatment <- dat$day0*eligyield
+dat$treated <- cumsum(dat$starttreatment)
+dat$endtreatment <- cumsum(dat$M3)*(1-treat24weeks) + cumsum(dat$M6)
+dat$ontreatment <- dat$treated - dat$endtreatment
+dat[dat == 0] <-  NA
 
 # plot
 dat2 <- dat %>% gather("visit_type","n",17:18)
@@ -60,4 +65,6 @@ ggplot(dat2,aes(x=date,y=n,color=visit_type)) + geom_line()
 dat3 <- dat %>% gather("visit_type","n",17:21)
 ggplot(dat3,aes(x=date,y=n,color=visit_type)) + geom_line() 
 
+# dat4 <- dat %>% gather("treated","n",22:24) %>% filter(treated=="ontreatment")
+ggplot(dat,aes(x=date,y=ontreatment)) + geom_line()
 
