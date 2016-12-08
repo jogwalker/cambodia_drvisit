@@ -47,7 +47,7 @@ shinyServer(
   
   dat <- eventReactive(input$run, {
     getdat(input$dates,input$elisaperday,input$elisaperday2,input$reducescreening,input$elisayield,input$elisawait,input$PCRyield,input$PCRwait,input$waitlist,input$ltfuF0F1,input$waitF0F1,input$waitbaseline,input$eligyield)
-  })
+    })
   
   output$plot1 <- renderPlot({
     p <- dat() %>% gather("visit_type","n",17:21) %>% ggplot(aes(x=date,y=n,color=visit_type)) + geom_line() + theme_bw()

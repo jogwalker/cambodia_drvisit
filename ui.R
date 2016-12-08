@@ -40,7 +40,7 @@ fluidPage(
     
     sliderInput('waitF0F1', 'Time on waiting list (weeks)', min=0, max=100,  value=26, step=1, round=0),
     
-    sliderInput('waitlist', 'Proportion of patients on waiting list LTFU', min=0, max=1,  value=0.1, step=0.01, round=0),
+    sliderInput('ltfuF0F1', 'Proportion of patients on waiting list LTFU', min=0, max=1,  value=0.1, step=0.01, round=0),
     
     actionButton("run","Run Simulation")
   ),
