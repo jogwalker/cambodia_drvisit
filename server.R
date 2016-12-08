@@ -6,13 +6,13 @@ library(tidyr)
 library(dplyr)
 
 
-getdat <- function(dates,elisaperday,elisaperday2,reducescreening,elisayield,elisawait,PCRyield,PCRwait,waitlist,ltfuF0F1,waitF0F1,waitbaseline,eligyield) {
+getdat <- function(dates,elisaperday,elisaperday2,reducescreening,elisayield,elisawait,PCRyield,PCRwait,waitlist,ltfuF0F1,waitF0F1,waitbaseline,eligyield,treat24weeks) {
   days <- seq(dates[1],dates[2],by=1)
   
   dat <- data.frame(date = as.Date(days),wday = wday(days))
   dat$ELISA <- 0
   dat$ELISA[dat$wday <= 5] <- elisaperday
-  dat$ELISA[dat$date >= (reducescreening)] <- elisaperday2
+  dat$ELISA[dat$date >= (reducescreening) & dat$wday <=5] <- elisaperday2
   dat$PCR <- Lag(dat$ELISA*elisayield,elisawait*7)
   dat$baseline <- Lag(dat$PCR*PCRyield,PCRwait*7)
   dat$reassess_F0F1 <- Lag(dat$baseline*waitlist*(1-ltfuF0F1),waitF0F1*7)
@@ -46,7 +46,7 @@ shinyServer(
   function(input, output) {
   
   dat <- eventReactive(input$run, {
-    getdat(input$dates,input$elisaperday,input$elisaperday2,input$reducescreening,input$elisayield,input$elisawait,input$PCRyield,input$PCRwait,input$waitlist,input$ltfuF0F1,input$waitF0F1,input$waitbaseline,input$eligyield)
+    getdat(input$dates,input$elisaperday,input$elisaperday2,input$reducescreening,input$elisayield,input$elisawait,input$PCRyield,input$PCRwait,input$waitlist,input$ltfuF0F1,input$waitF0F1,input$waitbaseline,input$eligyield,input$treat24weeks)
     })
   
   output$plot1 <- renderPlot({
